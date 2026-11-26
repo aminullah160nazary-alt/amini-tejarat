@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#153e35">
+<title>امینی تجارت | سیستم حسابداری رخت و سمنت</title>
+<meta name="description" content="حسابداری فروش رخت و سمنت، مشتریان، شرکت‌ها، بدهی، مفاد و گزارش ماهانه و سالانه">
+<style>
+:root{--green:#153e35;--green2:#246c55;--bg:#f3f6f4;--line:#e0e8e3;--muted:#6b7c74;--white:#fff;--gold:#d9ad58}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:#1c2b25}
+header{background:linear-gradient(130deg,#153e35,#276c55);color:white;padding:23px 18px 28px}
+.brand{max-width:1100px;margin:auto;display:flex;align-items:center;gap:14px}
+.logo{width:56px;height:56px;border-radius:16px;background:#fff;color:var(--green);display:grid;place-items:center;font-size:27px;font-weight:bold}
+h1{font-size:24px;margin:0 0 6px}header p{margin:0;color:#d8e8df;font-size:13px;line-height:1.8}
+main{max-width:1100px;margin:20px auto;padding:0 14px 35px}
+.toolbar,.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+button,select,input,textarea{font:inherit;border-radius:10px;border:1px solid #d6e0da;padding:11px;background:#fff;color:#21342b}
+button{background:var(--green2);color:white;border:0;cursor:pointer;font-weight:600}
+button.alt{background:#e6eee9;color:#24513e;border:1px solid #d3e0d7}
+button.danger{background:#fff0ed;color:#a33c2d;border:1px solid #f2d2cc}
+.tabs button{background:#e2eae5;color:#3b5d4c}.tabs button.active{background:var(--green);color:white}
+.view{display:none}.view.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.card,.panel{background:white;border:1px solid var(--line);border-radius:15px;padding:16px;box-shadow:0 4px 16px #173b2c06}
+.label{font-size:12px;color:var(--muted)}.value{font-size:22px;font-weight:700;margin:10px 0 4px;word-break:break-word}.positive{color:#16805b}
+.panel{margin-bottom:14px}.panel h2{font-size:17px;margin:0 0 14px}
+.formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+input,select{width:100%;min-width:0}.formactions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+table{border-collapse:collapse;width:100%;margin-top:12px;min-width:540px}th,td{padding:11px 9px;text-align:right;border-bottom:1px solid #edf1ee;font-size:12px}th{background:#f7faf8;color:#61746a}
+.tablewrap{overflow:auto}.small{font-size:12px;color:var(--muted);line-height:1.8}.statrow{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #edf1ee}
+.personitem{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #edf1ee;flex-wrap:wrap}
+.personitem strong{display:block;margin-bottom:5px}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:8px 10px;font-size:12px}
+.badge{display:inline-block;background:#edf5ef;color:#35634c;padding:5px 9px;border-radius:20px;font-size:11px}
+footer{text-align:center;color:#83928a;font-size:11px;padding:12px}
+@media(max-width:760px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.formgrid{grid-template-columns:repeat(2,minmax(0,1fr))}h1{font-size:21px}}
+@media(max-width:420px){.formgrid{grid-template-columns:1fr}.value{font-size:19px}.card{padding:12px}}
+@media print{header,.toolbar,.tabs,button,.formactions{display:none!important}body{background:white}.view{display:block!important}.panel,.card{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo">ا</div><div><h1>امینی تجارت</h1><p>سیستم مدیریت حساب و معاملات<br>صاحب تجارت: حاجی مول الدین امینی · رخت‌فروشی و سمنت‌فروشی</p></div></div></header>
+<main>
+<div class="toolbar">
+<select id="period" onchange="render()"><option value="month">گزارش ماه جاری</option><option value="year">گزارش سال جاری</option><option value="all">تمام دوره</option></select>
+<button class="alt" onclick="exportData()">ذخیره نسخه پشتیبان</button>
+<label class="alt" style="padding:8px 11px;border-radius:10px;cursor:pointer">بازیابی پشتیبان<input type="file" id="restore" accept=".json" hidden onchange="importData(event)"></label>
+<button class="alt" onclick="window.print()">چاپ گزارش</button>
+</div>
+<div class="grid">
+<div class="card"><div class="label">فروش رخت (دوره)</div><div class="value" id="clothSales">۰</div><span class="badge">افغانی / دالر</span></div>
+<div class="card"><div class="label">فروش سمنت (دوره)</div><div class="value" id="cementSales">۰</div><span class="badge">افغانی / دالر</span></div>
+<div class="card"><div class="label">مفاد ناخالص</div><div class="value positive" id="gross">۰</div><span class="badge">تفکیک ارز</span></div>
+<div class="card"><div class="label">مفاد خالص</div><div class="value positive" id="net">۰</div><span class="badge">پس از مصارف</span></div>
+</div>
+<div class="tabs">
+<button class="active" onclick="show('home',this)">داشبورد</button><button onclick="show('customers',this)">مشتریان</button><button onclick="show('clothco',this)">شرکت‌های رخت</button><button onclick="show('cementco',this)">شرکت‌های سمنت</button><button onclick="show('entry',this)">ثبت معامله</button><button onclick="show('reports',this)">گزارش مالی</button>
+</div>
+<section class="view active" id="home">
+<div class="panel"><h2>خلاصه حساب‌ها</h2><div class="grid">
+<div><div class="label">طلب مشتریان</div><div class="value" id="receivable">—</div></div>
+<div><div class="label">بدهی شرکت‌های رخت</div><div class="value" id="clothPayable">—</div></div>
+<div><div class="label">بدهی شرکت‌های سمنت</div><div class="value" id="cementPayable">—</div></div>
+<div><div class="label">مصارف ثبت‌شده</div><div class="value" id="expenses">—</div></div>
+</div><p class="small">مبالغ افغانی و دالر جداگانه جمع و نمایش داده می‌شوند؛ با نرخ دستی با هم مخلوط نمی‌شوند.</p></div>
+<div class="panel"><h2>آخرین معاملات</h2><div class="tablewrap"><table><thead><tr><th>تاریخ</th><th>نوع</th><th>حساب</th><th>مبلغ</th><th>پرداخت</th><th>باقی</th><th>ارز</th></tr></thead><tbody id="recent"></tbody></table></div></div>
+</section>
+<section class="view" id="customers"><div class="panel"><h2>افزودن مشتری</h2><div class="formgrid"><input id="newCustomer" placeholder="نام مشتری"><input id="customerPhone" placeholder="شماره تماس (اختیاری)"></div><div class="formactions"><button onclick="addPerson('customer')">ثبت مشتری</button></div><h2 style="margin-top:22px">دفتر حساب مشتریان</h2><div id="customerRows"></div></div></section>
+<section class="view" id="clothco"><div class="panel"><h2>شرکت‌های فروشنده رخت</h2><div class="formgrid"><input id="newCloth" placeholder="نام شرکت فروشنده رخت"></div><div class="formactions"><button onclick="addPerson('cloth')">ثبت شرکت رخت</button></div><div id="clothRows" style="margin-top:14px"></div></div></section>
+<section class="view" id="cementco"><div class="panel"><h2>شرکت‌های فروشنده سمنت</h2><div class="formgrid"><input id="newCement" placeholder="نام شرکت فروشنده سمنت"></div><div class="formactions"><button onclick="addPerson('cement')">ثبت شرکت سمنت</button></div><div id="cementRows" style="margin-top:14px"></div></div></section>
+<section class="view" id="entry"><div class="panel"><h2>ثبت معامله جدید</h2><div class="formgrid">
+<select id="kind" onchange="updateAccounts()"><option value="salecloth">فروش رخت به مشتری</option><option value="salecement">فروش سمنت به مشتری</option><option value="buycloth">خرید رخت از شرکت</option><option value="buycement">خرید سمنت از شرکت</option><option value="customerpay">دریافت پول از مشتری</option><option value="clothpay">پرداخت به شرکت رخت</option><option value="cementpay">پرداخت به شرکت سمنت</option><option value="expense">مصرف دکان</option></select>
+<select id="account"><option value="">انتخاب حساب</option></select>
+<select id="currency"><option value="AFN">افغانی (AFN)</option><option value="USD">دالر (USD)</option></select>
+<input id="total" type="number" min="0" step="0.01" placeholder="مبلغ معامله"><input id="paid" type="number" min="0" step="0.01" placeholder="مبلغ پرداخت / دریافت"><input id="cost" type="number" min="0" step="0.01" placeholder="بهای جنس فروخته‌شده (فقط فروش)">
+<input id="date" type="date"><input id="description" placeholder="شرح / تعداد / یادداشت"><input id="exchange" type="number" min="0" step="0.01" placeholder="نرخ دالر (اختیاری، افغانی برای ۱ USD)">
+</div><div class="formactions"><button onclick="addTx()">ثبت معامله و رسید</button><button class="alt" onclick="clearForm()">پاک‌کردن فورم</button></div><p class="small">در معامله فروش، مبلغ «بهای جنس فروخته‌شده» برای محاسبه مفاد ضروری است. پرداخت بخشی، باقی حساب را خودکار می‌سازد. دریافت/پرداخت‌های بعدی را از نوع معامله مربوط ثبت کنید.</p></div>
+<div class="panel"><h2>معاملات ثبت‌شده</h2><div class="tablewrap"><table><thead><tr><th>تاریخ</th><th>نوع</th><th>حساب</th><th>مبلغ</th><th>پرداخت</th><th>باقی معامله</th><th>ارز</th><th>رسید</th></tr></thead><tbody id="transactions"></tbody></table></div></div></section>
+<section class="view" id="reports"><div class="panel"><h2>گزارش مالی ماهوار و سالانه</h2><p class="small">دوره گزارش را از انتخاب بالای صفحه تعیین کنید.</p><div class="tablewrap"><table><thead><tr><th>عنوان</th><th>افغانی (AFN)</th><th>دالر (USD)</th></tr></thead><tbody id="reportRows"></tbody></table></div><button onclick="window.print()" style="margin-top:12px">چاپ گزارش</button></div></section>
+<footer>امینی تجارت · حاجی مول الدین امینی · نسخه محلی موبایل</footer>
+</main>
+<script>
+const KEY='aminiTradeV1';
+let db={people:{customer:[],cloth:[],cement:[]},tx:[]};
+try{let s=localStorage.getItem(KEY);if(s)db=JSON.parse(s)}catch(e){}
+const $=id=>document.getElementById(id), fmt=(n,c)=>Number(n||0).toLocaleString('fa-AF',{maximumFractionDigits:2})+' '+(c==='USD'?'دالر':'افغانی');
+const types={salecloth:'فروش رخت',salecement:'فروش سمنت',buycloth:'خرید رخت از شرکت',buycement:'خرید سمنت از شرکت',customerpay:'دریافت از مشتری',clothpay:'پرداخت شرکت رخت',cementpay:'پرداخت شرکت سمنت',expense:'مصرف دکان'};
+function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+function show(id,b){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active')}
+function addPerson(type){let input={customer:'newCustomer',cloth:'newCloth',cement:'newCement'}[type],name=$(input).value.trim();if(!name)return alert('نام را وارد کنید');if(db.people[type].some(p=>p.name===name))return alert('این نام قبلاً ثبت شده است');db.people[type].push({id:Date.now()+Math.random(),name,phone:type==='customer'?$('customerPhone').value.trim():''});$(input).value='';if(type==='customer')$('customerPhone').value='';save();render()}
+function accountGroup(k){return k==='salecloth'||k==='salecement'||k==='customerpay'?'customer':k==='buycloth'||k==='clothpay'?'cloth':k==='buycement'||k==='cementpay'?'cement':''}
+function updateAccounts(){let g=accountGroup($('kind').value),arr=g?db.people[g]:[];$('account').innerHTML='<option value="">انتخاب حساب</option>'+arr.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}
+function todayLocal(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function clearForm(){$('total').value='';$('paid').value='';$('cost').value='';$('description').value='';$('exchange').value='';$('date').value=todayLocal()}
+function addTx(){let kind=$('kind').value,group=accountGroup(kind),person=group?db.people[group].find(p=>String(p.id)===$('account').value):null,amount=+$('total').value,paid=+$('paid').value,cost=+$('cost').value,currency=$('currency').value,date=$('date').value||new Date().toISOString().slice(0,10);if(group&&!person)return alert('حساب مشتری یا شرکت را انتخاب کنید');if(amount<=0)return alert('مبلغ معامله را درست وارد کنید');if(paid<0||paid>amount&&['salecloth','salecement','buycloth','buycement'].includes(kind))return alert('مبلغ پرداختی نمی‌تواند از مبلغ معامله بیشتر باشد');if((kind==='salecloth'||kind==='salecement')&&cost<=0)return alert('برای محاسبه مفاد، بهای خرید جنس فروخته‌شده را وارد کنید');db.tx.push({id:Date.now()+Math.random(),kind,group,personId:person?.id||null,personName:person?.name||'مصارف دکان',amount,paid,cost:kind.startsWith('sale')?cost:0,currency,date,description:$('description').value.trim(),rate:+$('exchange').value||null});save();let receipt=db.tx[db.tx.length-1];clearForm();render();alert('معامله ثبت شد. شماره رسید: '+receipt.id.toString().slice(-6))}
+function netPerson(p,g,c){return db.tx.filter(t=>t.personId===p.id&&t.currency===c).reduce((s,t)=>{if(g==='customer'){if(t.kind.startsWith('sale'))return s+t.amount-t.paid;if(t.kind==='customerpay')return s-t.amount}else{if(t.kind.startsWith('buy'))return s+t.amount-t.paid;if(t.kind.endsWith('pay'))return s-t.amount}return s},0)}
+function balances(g){return ['AFN','USD'].map(c=>db.people[g].reduce((s,p)=>s+Math.max(0,netPerson(p,g,c)),0))}
+function filtered(){let period=$('period').value,now=todayLocal();return db.tx.filter(t=>period==='all'||(period==='month'?t.date.slice(0,7)===now.slice(0,7):t.date.slice(0,4)===now.slice(0,4)))}
+function sums(arr,fn,c){return arr.filter(t=>t.currency===c).reduce((s,t)=>s+fn(t),0)}
+function render(){updateAccounts();renderPeople();let arr=filtered(),sales=(kind)=>sums(arr,t=>t.amount,t.kind);let cloth=sums(arr,t=>t.amount,t.kind==='salecloth'),cement=sums(arr,t=>t.amount,t.kind==='salecement'),grossAFN=sums(arr,t=>t.amount-t.cost,t.kind.startsWith('sale')&&t.kind!=='expense'); // replaced below with proper per currency
+function total(kind,c,fn=t=>t.amount){return sums(arr,fn,t=>t.kind===kind&&t.currency===c)}
+function val(kind,c,fn=t=>t.amount){return arr.filter(t=>t.kind===kind&&t.currency===c).reduce((s,t)=>s+fn(t),0)}
+let metrics={};['AFN','USD'].forEach(c=>{let sc=val('salecloth',c)+val('salecement',c),cost=arr.filter(t=>t.kind.startsWith('sale')&&t.currency===c).reduce((s,t)=>s+t.cost,0),exp=val('expense',c),gross=sc-cost;metrics[c]={sc,cost,gross,net:gross-exp,expense:exp,cloth:val('salecloth',c),cement:val('salecement',c),buys:val('buycloth',c)+val('buycement',c),cash:arr.filter(t=>t.kind.startsWith('sale')&&t.currency===c).reduce((s,t)=>s+t.paid,0)}})
+$('clothSales').textContent=fmt(metrics.AFN.cloth,'AFN')+' | '+fmt(metrics.USD.cloth,'USD');$('cementSales').textContent=fmt(metrics.AFN.cement,'AFN')+' | '+fmt(metrics.USD.cement,'USD');$('gross').textContent=fmt(metrics.AFN.gross,'AFN')+' | '+fmt(metrics.USD.gross,'USD');$('net').textContent=fmt(metrics.AFN.net,'AFN')+' | '+fmt(metrics.USD.net,'USD');
+let rb=balances('customer'),cb=balances('cloth'),sb=balances('cement');$('receivable').textContent=fmt(rb[0],'AFN')+' | '+fmt(rb[1],'USD');$('clothPayable').textContent=fmt(cb[0],'AFN')+' | '+fmt(cb[1],'USD');$('cementPayable').textContent=fmt(sb[0],'AFN')+' | '+fmt(sb[1],'USD');$('expenses').textContent=fmt(metrics.AFN.expense,'AFN')+' | '+fmt(metrics.USD.expense,'USD');
+let rows=db.tx.slice().reverse().map(t=>`<tr><td>${esc(t.date)}</td><td>${types[t.kind]}</td><td>${esc(t.personName)}</td><td>${fmt(t.amount,t.currency)}</td><td>${fmt(t.paid,t.currency)}</td><td>${fmt(t.amount-t.paid,t.currency)}</td><td>${t.currency}</td><td><button class="alt" onclick="receipt('${t.id}')">رسید</button><button class="alt" onclick="editTx('${t.id}')">ویرایش</button><button class="danger" onclick="deleteTx('${t.id}')">حذف</button></td></tr>`).join('');$('transactions').innerHTML=rows||'<tr><td colspan="8">هنوز معامله‌ای ثبت نشده است.</td></tr>';$('recent').innerHTML=db.tx.slice().reverse().slice(0,6).map(t=>`<tr><td>${esc(t.date)}</td><td>${types[t.kind]||t.kind}</td><td>${esc(t.personName)}</td><td>${fmt(t.amount,t.currency)}</td><td>${fmt(t.paid,t.currency)}</td><td>${fmt(t.amount-t.paid,t.currency)}</td><td>${t.currency}</td></tr>`).join('')||'<tr><td colspan="7">هنوز معامله‌ای ثبت نشده است.</td></tr>';
+let report='';['AFN','USD'].forEach(c=>{let m=metrics[c];report+=`<tr><th>مجموع فروش</th><td>${fmt(m.sc,c)}</td><td>${c==='USD'?fmt(m.sc,c):'—'}</td></tr>`}); // create clear combined table rows
+let r=[];['AFN','USD'].forEach(c=>{let m=metrics[c];r.push(`<tr><th>فروش مجموع (${c})</th><td>${c==='AFN'?fmt(m.sc,c):'—'}</td><td>${c==='USD'?fmt(m.sc,c):'—'}</td></tr>`,
+`<tr><th>بهای جنس فروخته‌شده (${c})</th><td>${c==='AFN'?fmt(m.cost,c):'—'}</td><td>${c==='USD'?fmt(m.cost,c):'—'}</td></tr>`,
+`<tr><th>مفاد ناخالص (${c})</th><td>${c==='AFN'?fmt(m.gross,c):'—'}</td><td>${c==='USD'?fmt(m.gross,c):'—'}</td></tr>`,
+`<tr><th>مصارف (${c})</th><td>${c==='AFN'?fmt(m.expense,c):'—'}</td><td>${c==='USD'?fmt(m.expense,c):'—'}</td></tr>`,
+`<tr><th>مفاد خالص (${c})</th><td>${c==='AFN'?fmt(m.net,c):'—'}</td><td>${c==='USD'?fmt(m.net,c):'—'}</td></tr>`)});$('reportRows').innerHTML=r.join('')}
+function renderPeople(){let config=[['customer','customerRows'],['cloth','clothRows'],['cement','cementRows']];config.forEach(([g,id])=>{$(id).innerHTML=db.people[g].map(p=>{let b=['AFN','USD'].map(c=>fmt(Math.max(0,netPerson(p,g,c)),c)).join(' / ');return `<div class="personitem"><div><strong>${esc(p.name)}</strong><span class="small">${g==='customer'?'طلب دکان':'بدهی به شرکت'}: ${b}</span>${p.phone?`<div class="small">${esc(p.phone)}</div>`:''}</div><div class="actions"><button class="alt" onclick="personHistory('${p.id}','${g}')">دفتر حساب</button><button class="danger" onclick="removePerson('${p.id}','${g}')">حذف</button></div></div>`}).join('')||'<p class="small">هنوز موردی ثبت نشده است.</p>'})}
+function personHistory(id,g){let p=db.people[g].find(x=>String(x.id)===String(id));let list=db.tx.filter(t=>String(t.personId)===String(id));alert('حساب: '+p.name+'\\n'+list.map(t=>`${t.date} | ${types[t.kind]} | ${fmt(t.amount,t.currency)} | پرداخت ${fmt(t.paid,t.currency)}`).join('\\n')+'\\n\\nباقی AFN: '+fmt(netPerson(p,g,'AFN'),'AFN')+'\\nباقی USD: '+fmt(netPerson(p,g,'USD'),'USD'))}
+function removePerson(id,g){if(!confirm('این حساب حذف شود؟ معاملات ثبت‌شده باقی می‌مانند.'))return;db.people[g]=db.people[g].filter(p=>String(p.id)!==String(id));save();render()}
+function editTx(id){let t=db.tx.find(x=>String(x.id)===String(id));if(!t)return;let amount=prompt('مبلغ معامله ('+t.currency+')',t.amount);if(amount===null)return;amount=Number(amount);if(!Number.isFinite(amount)||amount<=0)return alert('مبلغ نامعتبر است');let paid=prompt('مبلغ پرداخت/دریافت شده',t.paid);if(paid===null)return;paid=Number(paid);if(!Number.isFinite(paid)||paid<0)return alert('مبلغ پرداخت نامعتبر است');let cost=t.cost||0;if(t.kind.startsWith('sale')){let c=prompt('بهای جنس فروخته‌شده',cost);if(c===null)return;cost=Number(c);if(!Number.isFinite(cost)||cost<0)return alert('بهای جنس نامعتبر است')}let date=prompt('تاریخ (YYYY-MM-DD)',t.date);if(date===null)return;if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return alert('تاریخ را به شکل YYYY-MM-DD وارد کنید');let description=prompt('شرح معامله',t.description||'');if(description===null)return;t.amount=amount;t.paid=paid;t.cost=cost;t.date=date;t.description=description;save();render();alert('معامله ویرایش شد')}
+function deleteTx(id){if(!confirm('این معامله حذف شود؟ این عمل قابل برگشت نیست؛ قبل از حذف نسخه پشتیبان بگیرید.'))return;db.tx=db.tx.filter(t=>String(t.id)!==String(id));save();render();alert('معامله حذف شد')}
+function receipt(id){let t=db.tx.find(x=>String(x.id)===String(id));let win=window.open('','_blank');if(!win)return alert('اجازه بازشدن پنجره رسید را در مرورگر بدهید');win.document.write(`<html dir="rtl"><meta charset="utf-8"><title>رسید امینی تجارت</title><body style="font-family:Tahoma;padding:25px"><h2>امینی تجارت</h2><p>حاجی مول الدین امینی</p><hr><h3>رسید معامله</h3><p>شماره: ${String(t.id).slice(-6)}</p><p>تاریخ: ${esc(t.date)}</p><p>نوع: ${types[t.kind]}</p><p>نام: ${esc(t.personName)}</p><p>شرح: ${esc(t.description||'—')}</p><p>مبلغ: ${fmt(t.amount,t.currency)}</p><p>پرداخت: ${fmt(t.paid,t.currency)}</p><p>باقی معامله: ${fmt(t.amount-t.paid,t.currency)}</p><hr><p>امضا: __________</p><script>window.print()<\\/script></body></html>`);win.document.close()}
+function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Amini_Tejarat_backup.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}
+function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.people||!x.tx)throw 0;db=x;save();render();alert('نسخه پشتیبان بازیابی شد')}catch(err){alert('فایل پشتیبان معتبر نیست')}};r.readAsText(f);e.target.value=''}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('date').value=todayLocal();render();
+</script></body></html>
